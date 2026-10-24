@@ -26,3 +26,7 @@ A Python project that helps students organize their academic tasks.
 ## Concepts Practiced
 Functions, lists, dictionaries, loops, conditional statements,
 file handling, and exception handling.
+
+## Application Screenshot
+
+![Student Task Manager](student-task-manager.png)
