@@ -14,7 +14,8 @@ def load_tasks():
                 return json.load(file)
         except (json.JSONDecodeError, OSError):
             messagebox.showwarning(
-                "Warning", "Could not load saved tasks."
+                "Warning",
+                "Could not load saved tasks."
             )
     return []
 
@@ -24,8 +25,10 @@ def save_tasks():
         with open(FILE_NAME, "w") as file:
             json.dump(tasks, file, indent=4)
     except OSError:
-        messagebox.showerror("Error", "Could not save tasks.")
-
+        messagebox.showerror(
+            "Error",
+            "Could not save tasks."
+        )
 
 
 def refresh_tasks():
@@ -37,7 +40,11 @@ def refresh_tasks():
         title = task["title"].lower()
         subject = task["subject"].lower()
 
-        if search_text and search_text not in title and search_text not in subject:
+        if (
+            search_text
+            and search_text not in title
+            and search_text not in subject
+        ):
             continue
 
         status = "Completed" if task["completed"] else "Pending"
@@ -81,7 +88,11 @@ def add_task():
 
     title_entry.delete(0, tk.END)
     subject_entry.delete(0, tk.END)
-    messagebox.showinfo("Success", "Task added successfully!")
+
+    messagebox.showinfo(
+        "Success",
+        "Task added successfully!"
+    )
 
 
 def complete_task():
@@ -89,7 +100,8 @@ def complete_task():
 
     if not selected:
         messagebox.showwarning(
-            "Select Task", "Please select a task first."
+            "Select Task",
+            "Please select a task first."
         )
         return
 
@@ -108,40 +120,51 @@ def delete_task():
 
     if not selected:
         messagebox.showwarning(
-            "Select Task", "Please select a task to delete."
+            "Select Task",
+            "Please select a task to delete."
         )
         return
 
     task_id = int(selected[0])
 
     if messagebox.askyesno(
-        "Confirm Delete", "Are you sure you want to delete this task?"
+        "Confirm Delete",
+        "Are you sure you want to delete this task?"
     ):
-        tasks[:] = [task for task in tasks if task["id"] != task_id]
+        tasks[:] = [
+            task for task in tasks
+            if task["id"] != task_id
+        ]
         save_tasks()
         refresh_tasks()
 
 
+# Load saved tasks
 tasks = load_tasks()
 
+# Main window
 root = tk.Tk()
 root.title("Student Task Manager")
 root.geometry("850x550")
 root.minsize(700, 450)
 root.configure(bg="#F1F5F9")
 
+# Styling
 style = ttk.Style()
 style.theme_use("clam")
+
 style.configure(
     "Treeview",
     rowheight=30,
     font=("Arial", 10)
 )
+
 style.configure(
     "Treeview.Heading",
     font=("Arial", 10, "bold")
 )
 
+# Heading
 heading = tk.Label(
     root,
     text="STUDENT TASK MANAGER",
@@ -151,24 +174,39 @@ heading = tk.Label(
 )
 heading.pack(pady=18)
 
-form = tk.Frame(root, bg="white", padx=15, pady=15)
+# Task entry form
+form = tk.Frame(
+    root,
+    bg="white",
+    padx=15,
+    pady=15
+)
 form.pack(fill="x", padx=25)
 
-tk.Label(form, text="Task Title", bg="white").grid(
-    row=0, column=0, sticky="w", padx=5
-)
+tk.Label(
+    form,
+    text="Task Title",
+    bg="white"
+).grid(row=0, column=0, sticky="w", padx=5)
+
 title_entry = ttk.Entry(form, width=25)
 title_entry.grid(row=1, column=0, padx=5, pady=8)
 
-tk.Label(form, text="Subject", bg="white").grid(
-    row=0, column=1, sticky="w", padx=5
-)
+tk.Label(
+    form,
+    text="Subject",
+    bg="white"
+).grid(row=0, column=1, sticky="w", padx=5)
+
 subject_entry = ttk.Entry(form, width=20)
 subject_entry.grid(row=1, column=1, padx=5, pady=8)
 
-tk.Label(form, text="Priority", bg="white").grid(
-    row=0, column=2, sticky="w", padx=5
-)
+tk.Label(
+    form,
+    text="Priority",
+    bg="white"
+).grid(row=0, column=2, sticky="w", padx=5)
+
 priority_box = ttk.Combobox(
     form,
     values=["High", "Medium", "Low"],
@@ -189,10 +227,16 @@ add_button = tk.Button(
 )
 add_button.grid(row=1, column=3, padx=8)
 
-
-# Search bar
-search_frame = tk.Frame(root, bg="#F1F5F9")
-search_frame.pack(fill="x", padx=25, pady=(12, 0))
+# Search bar - only one
+search_frame = tk.Frame(
+    root,
+    bg="#F1F5F9"
+)
+search_frame.pack(
+    fill="x",
+    padx=25,
+    pady=(12, 0)
+)
 
 tk.Label(
     search_frame,
@@ -200,22 +244,38 @@ tk.Label(
     bg="#F1F5F9"
 ).pack(side="left", padx=(0, 8))
 
-search_entry = ttk.Entry(search_frame, width=30)
+search_entry = ttk.Entry(
+    search_frame,
+    width=30
+)
 search_entry.pack(side="left", padx=5)
 
-search_entry.bind("<KeyRelease>", lambda event: refresh_tasks())
+search_entry.bind(
+    "<KeyRelease>",
+    lambda event: refresh_tasks()
+)
+
+def clear_search():
+    search_entry.delete(0, tk.END)
+    refresh_tasks()
 
 ttk.Button(
     search_frame,
     text="Clear Search",
-    command=lambda: (
-        search_entry.delete(0, tk.END),
-        refresh_tasks()
-    )
+    command=clear_search
 ).pack(side="left", padx=5)
 
-table_frame = tk.Frame(root, bg="#F1F5F9")
-table_frame.pack(fill="both", expand=True, padx=25, pady=18)
+# Task table
+table_frame = tk.Frame(
+    root,
+    bg="#F1F5F9"
+)
+table_frame.pack(
+    fill="both",
+    expand=True,
+    padx=25,
+    pady=18
+)
 
 columns = ("Title", "Subject", "Priority", "Status")
 
@@ -228,11 +288,19 @@ task_list = ttk.Treeview(
 
 for column in columns:
     task_list.heading(column, text=column)
-    task_list.column(column, width=150, anchor="center")
+    task_list.column(
+        column,
+        width=150,
+        anchor="center"
+    )
 
 task_list.pack(fill="both", expand=True)
 
-buttons = tk.Frame(root, bg="#F1F5F9")
+# Action buttons
+buttons = tk.Frame(
+    root,
+    bg="#F1F5F9"
+)
 buttons.pack(pady=(0, 18))
 
 tk.Button(
@@ -255,5 +323,8 @@ tk.Button(
     pady=7
 ).pack(side="left", padx=8)
 
+# Display tasks when the app opens
 refresh_tasks()
+
+# Start application
 root.mainloop()
